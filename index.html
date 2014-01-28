@@ -1,14 +1,130 @@
+<!doctype>
 <html>
-<div align="center">
-<h1>CSS3 Gradient Generation Tool</h1>
+<head>
+<title>CSS3 Gradient Generator Prototype</title>
+<style>
+canvas {
+        border: 1px solid black;
+		background: -moz-linear-gradient(180deg,#FFAC1C 30%, #FF0000 70%);
+		
+}
+div {
+		text-align:center;
+        width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+}
+</style>
+</head>
+<body onload="rotateAxis()">
+<div>
+<h1>CSS3 Gradient Generator Prototype - WIP</h1>
+    <h3>Click and drag to rotate the gradient axis.</h3>
+<canvas id ="myCanvas" width=600 height= 300>
+</canvas>
 </div>
-<div style="padding-left:200px;padding-right:200px;">
-<h3>I have developed two versions of this tool. <br>One that makes use of some JS Libraries. It is almost complete. <br>The other only makes use of HTML5 Canvas. Its status is WIP.</h3>
-</div>
-<div style="padding-left:200px;">
-<ul>
-<li><a href="grad_tool_jsLibs/">Using JS Libraries</a></li>
-<li><a href="grad_tool_canvas/">Using HTML5 Canvas</a></li>
-</ul>
-</div>
+</body>
+<script>
+var canvas = document.getElementById("myCanvas");
+var context = canvas.getContext("2d");
+var angle = 100;
+var cx = 310,
+    cy = 150;
+var dragging = false;
+
+function rotateAxis() {
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.save();
+    context.fillStyle = "#000000";
+    context.translate(310, 150);
+    context.rotate(angle * Math.PI / 180);
+    context.translate(-310, -150);
+    context.beginPath();
+    context.arc(310, 150, 5, 0, 2 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.moveTo(280, 10);
+    context.lineTo(320, 200);
+    context.stroke();
+    context.restore();
+}
+
+var dx, dy;
+
+canvas.onmousedown = function (event) {
+    mousedown(event)
+};
+canvas.onmouseup = function (event) {
+    mouseup(event)
+};
+canvas.onmousemove = function (event) {
+    mousemove(event)
+};
+
+
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+function limitAngle() {
+    if (angle < 0)
+        angle = angle + 360;
+    else if (angle >= 360)
+        angle = angle - 360;
+}
+
+function mousedown(event) {
+    dragging = true;
+    var mousePos = getMousePos(canvas, event);
+    x1 = mousePos.x;
+    y1 = mousePos.y;
+    if (x1 != cx && y1 != cy) {
+        dx = (x1 - cx);
+        dy = (y1 - cy);
+        angle = Math.atan2(dy, dx) * 180 / Math.PI + 100 ;
+        limitAngle();
+        rotateAxis();
+		console.log("ptr:"+angle);
+        angle = 282 - angle;
+        limitAngle();
+		console.log(angle);
+        updateGrad();
+
+    }
+}
+
+function mousemove(event) {
+    if (dragging == true) {
+        var mousePos = getMousePos(canvas, event);
+        x1 = mousePos.x;
+        y1 = mousePos.y;
+        if (x1 != cx && y1 != cy) {
+            dx = (x1 - cx);
+            dy = (y1 - cy);
+            angle = Math.atan2(dy, dx) * 180 / Math.PI + 100;
+            limitAngle();
+            rotateAxis();
+			console.log("ptr:"+angle);
+            angle = 282 - angle;
+            limitAngle();
+			console.log(angle);
+            updateGrad();
+        }
+    }
+}
+
+function mouseup(event) {
+    dragging = false;
+}
+
+function updateGrad() {
+    var p = document.getElementById('myCanvas');
+    p.style.background = "-moz-linear-gradient(" + (angle) + "deg, #FFAC1C 30%, #FF0000 70%)";
+}
+</script>
 </html>
