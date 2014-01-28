@@ -1,14 +1,42 @@
+<!doctype>
 <html>
-<div align="center">
-<h1>CSS3 Gradient Generation Tool</h1>
+<meta charset="utf-8">
+<title>CSS3 Gradient Generator</title>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="jquery.js"></script>
+<script src="rotateAxis.js"></script>
+<script src="generateCss.js"></script>
+<script src="html5slider.js"></script>
+<script type="text/javascript" src="jscolor/jscolor.js"></script>
+<style id="appStyle" type='text/css'>
+    .appStyle { }
+</style>
+</head>
+<body onload="init();">
+<div id="header">
+<h1>CSS Gradient Generator</h1>
 </div>
-<div style="padding-left:200px;padding-right:200px;">
-<h3>I have developed two versions of this tool. <br>One that makes use of some JS Libraries. It is almost complete. <br>The other only makes use of HTML5 Canvas. Its status is WIP.</h3>
+<div id="usage">Click and Drag Arrow-Head to change Gradient Angle. Click on Color to change the corresponding Gradient Color. Use Slider to change the corresponding Color Distance.</div>
+<div id="gradient" class="appStyle">
+<div id="c1">
+
+<input type="range" value=30 id="col1R" onchange ="updateColorDistance(this.id, this.value);"/><br>
+<input id="col1" value="FF0000" class="color" onchange = "updateColor(this.id,this.value);"/>
+
 </div>
-<div style="padding-left:200px;">
-<ul>
-<li><a href="grad_tool_jsLibs/">Using JS Libraries</a></li>
-<li><a href="grad_tool_canvas/">Using HTML5 Canvas</a></li>
-</ul>
+<div id="c2">
+<input type="range" value=70 id="col2R" onchange ="updateColorDistance(this.id, this.value);"/><br>
+<input id="col2" value="FFAC1C" class="color" onchange = "updateColor(this.id,this.value);"/>
+
+
 </div>
+</div><div id="circle"></div>
+<div class="draggable_axis">
+<div class="axis"></div>
+<div class="holder" draggable = "true"></div>
+</div>
+<textarea id="css" cols=60 rows=12 readonly="readonly"></textarea>
+
+</body>
 </html>
