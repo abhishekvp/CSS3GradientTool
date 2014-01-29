@@ -1,12 +1,12 @@
 <!doctype>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>CSS3 Gradient Generator Prototype</title>
 <style>
 canvas {
         border: 1px solid black;
-		background: -moz-linear-gradient(180deg,#FFAC1C 30%, #FF0000 70%);
-		
+		background: linear-gradient(0deg, #FFAC1C , #FF0000 );
 }
 div {
 		text-align:center;
@@ -16,29 +16,31 @@ div {
 }
 </style>
 </head>
-<body onload="rotateAxis()">
+<body onload="rotateAxis(12)">
 <div>
-<h1>CSS3 Gradient Generator Prototype - WIP</h1>
-    <h3>Click and drag to rotate the gradient axis.</h3>
+<h1>CSS3 Gradient Generator - WIP</h1>
+    <h3>Click and drag to rotate the axis.</h3>
 <canvas id ="myCanvas" width=600 height= 300>
-</canvas>
+</canvas><br><br><br>
+<textarea id="css" cols=70 rows=8 readonly="readonly"></textarea>
 </div>
 </body>
 <script>
 var canvas = document.getElementById("myCanvas");
 var context = canvas.getContext("2d");
-var angle = 100;
+var angle = 0;
 var cx = 310,
     cy = 150;
 var dragging = false;
+updateGrad(0);
 
-function rotateAxis() {
+function rotateAxis(rAngle) {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.save();
     context.fillStyle = "#000000";
     context.translate(310, 150);
-    context.rotate(angle * Math.PI / 180);
+    context.rotate(rAngle * Math.PI / 180);
     context.translate(-310, -150);
     context.beginPath();
     context.arc(310, 150, 5, 0, 2 * Math.PI);
@@ -72,6 +74,7 @@ function getMousePos(canvas, evt) {
 }
 
 function limitAngle() {
+	angle = Math.round(angle);
     if (angle < 0)
         angle = angle + 360;
     else if (angle >= 360)
@@ -80,7 +83,18 @@ function limitAngle() {
 
 function mousedown(event) {
     dragging = true;
-    var mousePos = getMousePos(canvas, event);
+	calcAngle(event);
+}
+
+function mousemove(event) {
+    if (dragging == true) {
+        calcAngle(event);
+        }
+    }
+
+
+function calcAngle(event) {
+	var mousePos = getMousePos(canvas, event);
     x1 = mousePos.x;
     y1 = mousePos.y;
     if (x1 != cx && y1 != cy) {
@@ -88,33 +102,12 @@ function mousedown(event) {
         dy = (y1 - cy);
         angle = Math.atan2(dy, dx) * 180 / Math.PI + 100 ;
         limitAngle();
-        rotateAxis();
-		console.log("ptr:"+angle);
-        angle = 282 - angle;
-        limitAngle();
+        rotateAxis(angle);
 		console.log(angle);
+		angle = angle - 12;
+		limitAngle();
         updateGrad();
 
-    }
-}
-
-function mousemove(event) {
-    if (dragging == true) {
-        var mousePos = getMousePos(canvas, event);
-        x1 = mousePos.x;
-        y1 = mousePos.y;
-        if (x1 != cx && y1 != cy) {
-            dx = (x1 - cx);
-            dy = (y1 - cy);
-            angle = Math.atan2(dy, dx) * 180 / Math.PI + 100;
-            limitAngle();
-            rotateAxis();
-			console.log("ptr:"+angle);
-            angle = 282 - angle;
-            limitAngle();
-			console.log(angle);
-            updateGrad();
-        }
     }
 }
 
@@ -123,8 +116,14 @@ function mouseup(event) {
 }
 
 function updateGrad() {
+	console.log("Grad Angle = "+angle);
     var p = document.getElementById('myCanvas');
-    p.style.background = "-moz-linear-gradient(" + (angle) + "deg, #FFAC1C 30%, #FF0000 70%)";
+    p.style.background = "linear-gradient(" + (angle) + "deg, #FFAC1C , #FF0000)";
+	updateCSS(angle);
+}
+
+function updateCSS(tempAngle) {
+	document.getElementById('css').value = "background: linear-gradient("+tempAngle+"deg , #FFAC1C , #FF0000);";
 }
 </script>
 </html>
